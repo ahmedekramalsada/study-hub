@@ -383,39 +383,80 @@ function highlightActiveSession(sessionId) {
     });
 }
 
+function sectionHeading(text, icon) {
+    return `<h3 class="cram-section-heading">${icon || ''} ${escapeHtml(text)}</h3>`;
+}
+
 function renderCheatSheet() {
     const cram = app.data.cramSheet || {};
-    document.getElementById('cheatsheet-title').textContent = `${app.exam.code} Study Plan`;
+    document.getElementById('cheatsheet-title').textContent = `${app.exam.code} ${app.exam.title} Study Plan`;
     document.getElementById('exam-description').textContent = app.exam.description || '';
     document.getElementById('resource-links').innerHTML = (app.exam.links || [])
-        .map((link) => `<a href="${escapeAttr(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`)
+        .map((link) => `<a class="resource-link" href="${escapeAttr(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`)
         .join('');
 
     let html = '';
 
     if (cram.studyPlanTimeline) {
-        html += `<div class="cram-timeline">${cram.studyPlanTimeline.map((item) => `<div class="cram-timeline-item cram-color-${item.color}"><div class="cram-time">${escapeHtml(item.time)}</div><div>${escapeHtml(item.label)}</div></div>`).join('')}</div>`;
+        html += sectionHeading('Study Timeline', '⏱️');
+        html += `<div class="cram-timeline">${cram.studyPlanTimeline.map((item, i) => `
+            <div class="cram-step">
+                <span class="cram-step-num color-${item.color}">${i + 1}</span>
+                <div class="cram-step-time">${escapeHtml(item.time)}</div>
+                <div class="cram-step-label">${escapeHtml(item.label)}</div>
+            </div>`).join('')}</div>`;
     }
 
     if (cram.domainWeights) {
-        html += `<div class="cram-section"><h3>Official Domain Weights</h3><div class="cram-grid cram-grid-5">${cram.domainWeights.map((item) => `<div class="cram-domain-card cram-color-${item.color}"><div class="cram-domain-pct">${escapeHtml(item.label)}</div><div>${escapeHtml(item.desc)}</div></div>`).join('')}</div></div>`;
+        html += sectionHeading('Exam Domain Weights', '📊');
+        html += `<div class="cram-stat-grid cols-5">${cram.domainWeights.map((item) => `
+            <div class="cram-stat-card">
+                <div class="cram-stat-value color-${item.color}">${escapeHtml(item.label)}</div>
+                <div class="cram-stat-desc">${escapeHtml(item.desc)}</div>
+            </div>`).join('')}</div>`;
     }
 
     if (cram.repeatedIdeas) {
-        html += `<div class="cram-section"><h3>Most Repeated Ideas In This Dump</h3><div class="cram-grid cram-grid-4">${cram.repeatedIdeas.map((item) => `<div class="cram-idea-card"><div class="cram-idea-label cram-color-${item.color}">${escapeHtml(item.label)}</div><div>${escapeHtml(item.desc)}</div></div>`).join('')}</div></div>`;
+        html += sectionHeading('Most Repeated Ideas', '🔄');
+        html += `<div class="cram-stat-grid">${cram.repeatedIdeas.map((item) => `
+            <div class="cram-stat-card">
+                <div class="cram-stat-value color-${item.color}">${escapeHtml(item.label)}</div>
+                <div class="cram-stat-desc">${escapeHtml(item.desc)}</div>
+            </div>`).join('')}</div>`;
     }
 
     if (cram.solverRules) {
-        html += `<div class="cram-section"><h3>The Solver Rules</h3><div class="cram-rules">${cram.solverRules.map((item) => `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}:</span> ${escapeHtml(item.rule)}</p>`).join('')}</div></div>`;
+        html += sectionHeading('Decision Rules', '🧠');
+        html += `<div class="cram-rules">${cram.solverRules.map((item) => `
+            <div class="cram-rule-card">
+                <div class="cram-rule-header color-${item.color}">${escapeHtml(item.keyword)}</div>
+                <div class="cram-rule-body">${escapeHtml(item.rule)}</div>
+            </div>`).join('')}</div>`;
     }
 
     if (cram.securitySection) {
-        html += `<div class="cram-section"><h3>${escapeHtml(cram.securitySection.title)}</h3><div class="cram-cols-3">${cram.securitySection.columns.map((col) => `<div class="cram-col"><h4 class="cram-col-title cram-color-${col.color}">${escapeHtml(col.title)}</h4>${col.items.map((item) => item.prefix ? `<p><span class="font-bold">${escapeHtml(item.prefix)}</span> ${escapeHtml(item.text)}</p>` : `<p>${escapeHtml(item.text)}</p>`).join('')}</div>`).join('')}</div></div>`;
+        const sec = cram.securitySection;
+        html += sectionHeading(sec.title, '🔐');
+        html += `<div class="cram-cols-3">${sec.columns.map((col) => `
+            <div class="cram-col-card">
+                <h4 class="cram-col-title color-${col.color}">${escapeHtml(col.title)}</h4>
+                ${col.items.map((item) => item.prefix
+                    ? `<p><strong>${escapeHtml(item.prefix)}</strong> ${escapeHtml(item.text)}</p>`
+                    : `<p>${escapeHtml(item.text)}</p>`).join('')}
+            </div>`).join('')}</div>`;
     }
 
     if (cram.serviceChooserTable) {
-        const table = cram.serviceChooserTable;
-        html += `<div class="cram-section"><h3>${escapeHtml(table.title)}</h3><div class="cram-table-wrap"><table class="cram-table"><thead><tr><th>Area</th><th>Choose This When You See</th><th>Common Trap</th></tr></thead><tbody>${table.rows.map((row) => `<tr><td class="cram-area cram-color-${row.color}">${escapeHtml(row.area)}</td><td>${escapeHtml(row.choose)}</td><td>${escapeHtml(row.trap)}</td></tr>`).join('')}</tbody></table></div></div>`;
+        const t = cram.serviceChooserTable;
+        html += sectionHeading(t.title, '🗂️');
+        html += `<div class="cram-table-wrap"><table class="cram-table"><thead><tr>
+            <th>Service area</th><th>Choose when you see</th><th>Watch out</th>
+        </tr></thead><tbody>${t.rows.map((row) => `
+            <tr>
+                <td class="col-area color-${row.color}">${escapeHtml(row.area)}</td>
+                <td class="col-choose">${escapeHtml(row.choose)}</td>
+                <td class="col-trap">${escapeHtml(row.trap)}</td>
+            </tr>`).join('')}</tbody></table></div>`;
     }
 
     const twoColPairs = [['s3Patterns', 'pricingPatterns'], ['cloudConcepts', 'migrationHybrid'], ['promptRagSection', 'responsibleAiSection']];
@@ -423,33 +464,46 @@ function renderCheatSheet() {
     for (const [leftKey, rightKey] of twoColPairs) {
         const left = cram[leftKey];
         const right = cram[rightKey];
-        if (left || right) {
-            html += '<div class="cram-two-col">';
-            if (left) {
-                html += `<div class="cram-panel"><h3>${escapeHtml(left.title)}</h3><div class="cram-list">${left.items.map((item) => item.keyword ? `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>` : `<p>${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
-                renderedTwoCol.add(leftKey);
-            }
-            if (right) {
-                html += `<div class="cram-panel"><h3>${escapeHtml(right.title)}</h3><div class="cram-list">${right.items.map((item) => item.keyword ? `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>` : `<p>${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
-                renderedTwoCol.add(rightKey);
-            }
+        if (!left && !right) continue;
+        html += '<div class="cram-two-col">';
+        for (const key of [leftKey, rightKey]) {
+            const section = cram[key];
+            if (!section) continue;
+            html += `<div class="cram-panel-card"><h3>${escapeHtml(section.title)}</h3>`;
+            html += section.items.map((item) => {
+                if (item.keyword) {
+                    return `<p><strong class="color-${item.color}">${escapeHtml(item.keyword)}</strong> ${escapeHtml(item.text)}</p>`;
+                }
+                return `<p>${escapeHtml(item.text)}</p>`;
+            }).join('');
             html += '</div>';
+            renderedTwoCol.add(key);
         }
+        html += '</div>';
     }
 
     if (cram.metricsSection && !renderedTwoCol.has('metricsSection')) {
-        html += `<div class="cram-section"><h3>${escapeHtml(cram.metricsSection.title)}</h3><div class="cram-grid cram-grid-3">${cram.metricsSection.items.map((item) => `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+        html += sectionHeading(cram.metricsSection.title, '📐');
+        html += `<div class="cram-panel-card" style="margin-bottom:28px"><p style="font-size:13px;color:#cbd5e1;line-height:1.6">${cram.metricsSection.items.map((item) =>
+            `<strong class="color-${item.color}">${escapeHtml(item.keyword)}</strong> ${escapeHtml(item.text)}`
+        ).join('<br>')}</p></div>`;
     }
 
     if (cram.multiAnswerPatterns) {
-        html += `<div class="cram-section"><h3>${escapeHtml(cram.multiAnswerPatterns.title)}</h3><div class="cram-rules">${cram.multiAnswerPatterns.items.map((item) => `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+        html += sectionHeading(cram.multiAnswerPatterns.title, '✅');
+        html += `<div class="cram-multi">${cram.multiAnswerPatterns.items.map((item) => `
+            <div class="cram-multi-item">
+                <span class="cram-multi-kw color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}
+            </div>`).join('')}</div>`;
     }
 
     if (cram.trapPairs) {
-        html += `<div class="cram-section"><h3>${escapeHtml(cram.trapPairs.title)}</h3><div class="cram-traps">${cram.trapPairs.items.map((item) => `<p>${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+        html += sectionHeading(cram.trapPairs.title, '⚠️');
+        html += `<div class="cram-traps">${cram.trapPairs.items.map((item) => `
+            <div class="cram-trap-item">${escapeHtml(item.text)}</div>`).join('')}</div>`;
     }
 
-    html += `<div class="cram-section"><h3>High-Yield Concepts</h3><div class="concept-grid">${app.concepts.slice(0, 6).map(renderConceptCard).join('')}</div></div>`;
+    html += `<div class="cram-section">${sectionHeading('Key Concepts', '📖')}<div class="concept-grid">${app.concepts.slice(0, 6).map(renderConceptCard).join('')}</div></div>`;
 
     document.getElementById('cheatsheet-content').innerHTML = html;
 }
