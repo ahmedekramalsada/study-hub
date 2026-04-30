@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Home Lab</title>
+    <link rel="stylesheet" href="assets/study-lab.css">
+    <script src="assets/home.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+        <div class="shell topbar-inner">
+            <a class="brand" href="index.html" aria-label="Study Home Lab home">
+                <span class="brand-mark">LAB</span>
+                <span>
+                    <span class="brand-title">Study Home Lab</span>
+                    <span class="brand-subtitle">Dynamic certification practice websites</span>
+                </span>
+            </a>
+            <nav class="top-actions" aria-label="Primary">
+                <a class="link-btn" href="#active-exams">Active Exams</a>
+                <a class="link-btn" href="templates/dynamic-exam.example.json">Exam JSON Template</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="shell">
+        <section class="hero" aria-labelledby="home-title">
+            <div class="hero-copy">
+                <div class="eyebrow">Multi-cloud study home lab</div>
+                <h1 id="home-title">One dynamic app for every exam website.</h1>
+                <p>AWS is active now. Azure, Kubernetes, and Google Cloud can be added by dropping in a new JSON question bank and one metadata entry. Progress saves in this browser for each exam.</p>
+                <div class="stats-grid" aria-label="Study lab totals">
+                    <div class="stat"><strong id="active-sites">0</strong><span>active sites</span></div>
+                    <div class="stat"><strong id="provider-tracks">0</strong><span>provider tracks</span></div>
+                    <div class="stat"><strong id="question-total">0</strong><span>active questions</span></div>
+                    <div class="stat"><strong id="overall-progress">0%</strong><span>overall completion</span></div>
+                </div>
+            </div>
+
+            <div class="panel lab-visual" aria-label="Study lab flow">
+                <div class="flow-grid">
+                    <div class="flow-card">
+                        <b>Provider Track</b>
+                        <span>AWS, Azure, Kubernetes, Google Cloud, or any future topic.</span>
+                    </div>
+                    <div class="flow-card">
+                        <b>Reusable Exam Page</b>
+                        <span>One `exam.html` loads the right JSON data by URL query.</span>
+                    </div>
+                </div>
+                <div class="flow-grid">
+                    <div class="flow-card">
+                        <b>Question Bank</b>
+                        <span>`data/*.json` stores questions, concepts, and domains.</span>
+                    </div>
+                    <div class="flow-card">
+                        <b>Progress Memory</b>
+                        <span>`localStorage` keeps progress private to each browser profile.</span>
+                    </div>
+                </div>
+                <span class="muted" id="last-updated">No saved progress yet</span>
+            </div>
+        </section>
+
+        <p class="panel hidden" id="home-error"></p>
+
+        <section aria-labelledby="roadmap-title">
+            <div class="section-head">
+                <div>
+                    <h2 id="roadmap-title">Provider Roadmap</h2>
+                    <p>Planned tracks are placeholders for future generated exam websites.</p>
+                </div>
+            </div>
+            <div class="provider-grid" id="provider-grid"></div>
+        </section>
+
+        <section id="active-exams" aria-labelledby="active-title">
+            <div class="section-head">
+                <div>
+                    <h2 id="active-title">Active Study Websites</h2>
+                    <p>These cards are generated from `data/exams.json` and read saved progress from localStorage.</p>
+                </div>
+            </div>
+            <div class="exam-grid" id="exam-grid"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="shell">Use a local server URL for the dynamic JSON files. A different browser, private window, or device has separate saved progress.</div>
+    </footer>
+</body>
+</html>

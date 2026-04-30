@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Exam</title>
+    <link rel="stylesheet" href="assets/study-lab.css">
+    <script src="assets/exam.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+        <div class="shell topbar-inner">
+            <a class="brand" href="index.html" aria-label="Study Home Lab home">
+                <span class="brand-mark" id="exam-badge">LAB</span>
+                <span>
+                    <span class="brand-title" id="exam-title">Loading exam</span>
+                    <span class="brand-subtitle" id="exam-subtitle">Study Home Lab</span>
+                </span>
+            </a>
+            <div class="top-actions">
+                <a class="link-btn" href="index.html">Home Lab</a>
+                <div id="exam-links" class="top-actions"></div>
+                <div class="progress-wrap">
+                    <strong id="progress-text">0/0</strong>
+                    <div class="bar" aria-hidden="true"><div class="bar-fill" id="progress-bar"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="shell search-panel">
+        <div class="search-grid">
+            <input class="input" type="search" id="search-input" placeholder="Search questions, explanations, options, tags">
+            <input class="input" type="number" id="jump-input" min="1" placeholder="Jump to question">
+            <button class="action-btn primary" type="button" id="jump-btn">Go</button>
+        </div>
+        <div class="filter-row" id="filter-tags" aria-label="Question filters"></div>
+    </div>
+
+    <nav class="shell tabs" aria-label="Study sections">
+        <button class="tab-btn active" type="button" data-tab="cheatsheet">Cheat Sheet</button>
+        <button class="tab-btn" type="button" data-tab="quiz">Quiz</button>
+        <button class="tab-btn" type="button" data-tab="review">Review</button>
+        <button class="tab-btn" type="button" data-tab="learn">Concepts</button>
+        <button class="tab-btn" type="button" data-tab="keywords">Keywords</button>
+        <button class="tab-btn" type="button" data-tab="analytics">Analytics</button>
+    </nav>
+
+    <main class="shell layout">
+        <p class="panel hidden" id="exam-error"></p>
+
+        <section class="tab-panel panel" id="cheatsheet">
+            <div class="panel-head">
+                <div>
+                    <h2 id="cheatsheet-title">Study Plan</h2>
+                    <p id="exam-description"></p>
+                </div>
+                <div class="resource-row" id="resource-links"></div>
+            </div>
+            <div class="metric-grid" id="exam-metrics"></div>
+            <h3>Focus Order</h3>
+            <div class="list" id="study-plan"></div>
+            <h3>High-Yield Concepts</h3>
+            <div class="concept-grid" id="cheatsheet-concepts"></div>
+        </section>
+
+        <section class="tab-panel panel hidden" id="quiz">
+            <div class="panel-head">
+                <div>
+                    <h2>Interactive Quiz</h2>
+                    <p id="session-label">Session: Smart order</p>
+                </div>
+                <div class="button-row">
+                    <button class="action-btn" type="button" id="shuffle-btn">Shuffle</button>
+                    <button class="reset-btn" type="button" id="reset-btn">Reset Progress</button>
+                </div>
+            </div>
+            <div class="button-row" id="session-buttons"></div>
+            <div class="quiz-card">
+                <div>
+                    <p class="muted" id="question-counter">Question 1 of 0</p>
+                    <h2 class="question-title" id="question-text"></h2>
+                    <div class="filter-row" id="question-tags"></div>
+                </div>
+                <div class="options" id="options"></div>
+                <div class="multi-answer-controls hidden" id="multi-answer-controls">
+                    <p class="muted" id="selection-hint">Selected 0/0. Select the required answers.</p>
+                    <button class="action-btn primary" type="button" id="submit-answer-btn" disabled>Submit answer</button>
+                </div>
+                <button class="peek-btn" type="button" id="peek-answer-btn">Peek answer</button>
+                <div class="answer-peek hidden" id="answer-peek"></div>
+                <div class="answer-summary hidden" id="answer-summary"></div>
+                <div class="explanation hidden" id="explanation"></div>
+                <div class="button-row">
+                    <button class="action-btn" type="button" id="prev-btn">Previous</button>
+                    <button class="action-btn primary" type="button" id="next-btn">Next</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="tab-panel panel hidden" id="review">
+            <div class="panel-head">
+                <div>
+                    <h2>Review</h2>
+                    <p id="review-summary">Review correct, wrong, and unseen questions from one place.</p>
+                </div>
+                <div class="button-row" id="review-filters">
+                    <button class="chip-btn active" type="button" data-review-filter="all">All</button>
+                    <button class="chip-btn" type="button" data-review-filter="wrong">Wrong</button>
+                    <button class="chip-btn" type="button" data-review-filter="correct">Correct</button>
+                    <button class="chip-btn" type="button" data-review-filter="unseen">Unseen</button>
+                </div>
+            </div>
+            <div class="list" id="review-list"></div>
+        </section>
+
+        <section class="tab-panel panel hidden" id="learn">
+            <div class="panel-head">
+                <div>
+                    <h2>Concepts</h2>
+                    <p>Use concept cards to drill repeated exam patterns.</p>
+                </div>
+                <span class="status-pill" id="concept-count">0 topics</span>
+                <input class="input" type="search" id="concept-search" placeholder="Search concepts">
+            </div>
+            <div class="filter-row" id="concept-categories"></div>
+            <div class="concept-grid" id="concept-list"></div>
+        </section>
+
+        <section class="tab-panel panel hidden" id="keywords">
+            <div class="panel-head">
+                <div>
+                    <h2>Keywords</h2>
+                    <p>Click a keyword to start a filtered quiz session.</p>
+                </div>
+            </div>
+            <div class="concept-grid" id="keyword-list"></div>
+        </section>
+
+        <section class="tab-panel panel hidden" id="analytics">
+            <div class="panel-head">
+                <div>
+                    <h2>Analytics</h2>
+                    <p>Progress and accuracy based on this browser profile.</p>
+                </div>
+            </div>
+            <div class="metric-grid" id="analytics-metrics"></div>
+            <div class="callout" id="study-order-summary"></div>
+            <div class="two-col">
+                <section class="panel subpanel">
+                    <h3>3-4 Hour Study Path</h3>
+                    <div class="mini-grid" id="hour-plan"></div>
+                </section>
+                <section class="panel subpanel">
+                    <h3>Weakest Domains To Fix First</h3>
+                    <div class="mini-grid" id="weak-area-list"></div>
+                </section>
+            </div>
+            <section class="panel subpanel">
+                <h3>Repeated Concepts Saved For The End</h3>
+                <p>Smart order gives one representative question early, then puts repeated patterns later for reinforcement.</p>
+                <div class="mini-grid repeated-grid" id="repeat-topic-list"></div>
+            </section>
+            <h3>Domain Accuracy</h3>
+            <div class="domain-grid" id="domain-stats"></div>
+        </section>
+    </main>
+</body>
+</html>
