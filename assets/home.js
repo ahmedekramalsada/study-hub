@@ -84,8 +84,10 @@ function renderExam(exam, progress) {
             <p>${escapeHtml(exam.description)}</p>
             <div class="progress-wrap">
                 <strong>${progress.answered}/${exam.questionTotal}</strong>
-                <div class="bar" aria-hidden="true"><div class="bar-fill" style="width: ${percent}%; background: linear-gradient(90deg, ${escapeAttr(exam.accent || '#22c55e')}, ${escapeAttr(exam.accent || '#10b981')})"></div></div>
-                <span class="muted">${percent}%</span>
+                <div class="progress-row">
+                    <div class="bar" aria-hidden="true"><div class="bar-fill" style="width: ${percent}%; background: linear-gradient(90deg, ${escapeAttr(exam.accent || '#22c55e')}, ${escapeAttr(exam.accent || '#10b981')})"></div></div>
+                    <span class="muted">${percent}%</span>
+                </div>
             </div>
             <div class="metric-grid">
                 <div class="metric"><strong>${accuracy}%</strong><span>accuracy</span></div>
