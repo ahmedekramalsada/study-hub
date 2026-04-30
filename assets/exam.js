@@ -136,8 +136,7 @@ function setupUi() {
         .filter((exam) => exam.status === 'live' && exam.id !== app.exam.id)
         .map((exam) => `<a class="link-btn" href="exam.html?exam=${encodeURIComponent(exam.id)}">${escapeHtml(exam.code)}</a>`)
         .join('');
-    const legacyLink = app.exam.legacyPage ? `<a class="link-btn" href="${escapeAttr(app.exam.legacyPage)}">Original static page</a>` : '';
-    el.links.innerHTML = `${siblingLinks}${legacyLink}`;
+    el.links.innerHTML = siblingLinks;
 
     renderFilterTags();
     renderSessionButtons();
@@ -345,24 +344,74 @@ function renderSessionButtons() {
 }
 
 function renderCheatSheet() {
+    const cram = app.data.cramSheet || {};
     document.getElementById('cheatsheet-title').textContent = `${app.exam.code} Study Plan`;
     document.getElementById('exam-description').textContent = app.exam.description || '';
     document.getElementById('resource-links').innerHTML = (app.exam.links || [])
         .map((link) => `<a href="${escapeAttr(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`)
         .join('');
 
-    const stats = calculateStats();
-    document.getElementById('exam-metrics').innerHTML = [
-        metricHtml(app.questions.length, 'questions'),
-        metricHtml(`${stats.progress}%`, 'complete'),
-        metricHtml(`${stats.accuracy}%`, 'accuracy')
-    ].join('');
+    let html = '';
 
-    document.getElementById('study-plan').innerHTML = (app.exam.studyPlan || [])
-        .map((item, index) => `<div class="review-item"><strong>Step ${index + 1}</strong><br><span class="muted">${escapeHtml(item)}</span></div>`)
-        .join('');
+    if (cram.studyPlanTimeline) {
+        html += `<div class="cram-timeline">${cram.studyPlanTimeline.map((item) => `<div class="cram-timeline-item cram-color-${item.color}"><div class="cram-time">${escapeHtml(item.time)}</div><div>${escapeHtml(item.label)}</div></div>`).join('')}</div>`;
+    }
 
-    document.getElementById('cheatsheet-concepts').innerHTML = app.concepts.slice(0, 6).map(renderConceptCard).join('');
+    if (cram.domainWeights) {
+        html += `<div class="cram-section"><h3>Official Domain Weights</h3><div class="cram-grid cram-grid-5">${cram.domainWeights.map((item) => `<div class="cram-domain-card cram-color-${item.color}"><div class="cram-domain-pct">${escapeHtml(item.label)}</div><div>${escapeHtml(item.desc)}</div></div>`).join('')}</div></div>`;
+    }
+
+    if (cram.repeatedIdeas) {
+        html += `<div class="cram-section"><h3>Most Repeated Ideas In This Dump</h3><div class="cram-grid cram-grid-4">${cram.repeatedIdeas.map((item) => `<div class="cram-idea-card"><div class="cram-idea-label cram-color-${item.color}">${escapeHtml(item.label)}</div><div>${escapeHtml(item.desc)}</div></div>`).join('')}</div></div>`;
+    }
+
+    if (cram.solverRules) {
+        html += `<div class="cram-section"><h3>The Solver Rules</h3><div class="cram-rules">${cram.solverRules.map((item) => `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}:</span> ${escapeHtml(item.rule)}</p>`).join('')}</div></div>`;
+    }
+
+    if (cram.securitySection) {
+        html += `<div class="cram-section"><h3>${escapeHtml(cram.securitySection.title)}</h3><div class="cram-cols-3">${cram.securitySection.columns.map((col) => `<div class="cram-col"><h4 class="cram-col-title cram-color-${col.color}">${escapeHtml(col.title)}</h4>${col.items.map((item) => item.prefix ? `<p><span class="font-bold">${escapeHtml(item.prefix)}</span> ${escapeHtml(item.text)}</p>` : `<p>${escapeHtml(item.text)}</p>`).join('')}</div>`).join('')}</div></div>`;
+    }
+
+    if (cram.serviceChooserTable) {
+        const table = cram.serviceChooserTable;
+        html += `<div class="cram-section"><h3>${escapeHtml(table.title)}</h3><div class="cram-table-wrap"><table class="cram-table"><thead><tr><th>Area</th><th>Choose This When You See</th><th>Common Trap</th></tr></thead><tbody>${table.rows.map((row) => `<tr><td class="cram-area cram-color-${row.color}">${escapeHtml(row.area)}</td><td>${escapeHtml(row.choose)}</td><td>${escapeHtml(row.trap)}</td></tr>`).join('')}</tbody></table></div></div>`;
+    }
+
+    const twoColPairs = [['s3Patterns', 'pricingPatterns'], ['cloudConcepts', 'migrationHybrid'], ['promptRagSection', 'responsibleAiSection']];
+    const renderedTwoCol = new Set();
+    for (const [leftKey, rightKey] of twoColPairs) {
+        const left = cram[leftKey];
+        const right = cram[rightKey];
+        if (left || right) {
+            html += '<div class="cram-two-col">';
+            if (left) {
+                html += `<div class="cram-panel"><h3>${escapeHtml(left.title)}</h3><div class="cram-list">${left.items.map((item) => item.keyword ? `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>` : `<p>${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+                renderedTwoCol.add(leftKey);
+            }
+            if (right) {
+                html += `<div class="cram-panel"><h3>${escapeHtml(right.title)}</h3><div class="cram-list">${right.items.map((item) => item.keyword ? `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>` : `<p>${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+                renderedTwoCol.add(rightKey);
+            }
+            html += '</div>';
+        }
+    }
+
+    if (cram.metricsSection && !renderedTwoCol.has('metricsSection')) {
+        html += `<div class="cram-section"><h3>${escapeHtml(cram.metricsSection.title)}</h3><div class="cram-grid cram-grid-3">${cram.metricsSection.items.map((item) => `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+    }
+
+    if (cram.multiAnswerPatterns) {
+        html += `<div class="cram-section"><h3>${escapeHtml(cram.multiAnswerPatterns.title)}</h3><div class="cram-rules">${cram.multiAnswerPatterns.items.map((item) => `<p><span class="cram-kw cram-color-${item.color}">${escapeHtml(item.keyword)}</span> ${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+    }
+
+    if (cram.trapPairs) {
+        html += `<div class="cram-section"><h3>${escapeHtml(cram.trapPairs.title)}</h3><div class="cram-traps">${cram.trapPairs.items.map((item) => `<p>${escapeHtml(item.text)}</p>`).join('')}</div></div>`;
+    }
+
+    html += `<div class="cram-section"><h3>High-Yield Concepts</h3><div class="concept-grid">${app.concepts.slice(0, 6).map(renderConceptCard).join('')}</div></div>`;
+
+    document.getElementById('cheatsheet-content').innerHTML = html;
 }
 
 function renderQuiz() {

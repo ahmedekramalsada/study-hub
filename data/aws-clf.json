@@ -504,6 +504,153 @@
       ]
     }
   ],
+  "cramSheet": {
+    "studyPlanTimeline": [
+      {"time": "0:00-0:40", "label": "Security, IAM, shared responsibility", "color": "red"},
+      {"time": "0:40-1:30", "label": "Compute, storage, database, network", "color": "amber"},
+      {"time": "1:30-2:00", "label": "Pricing, billing, support", "color": "green"},
+      {"time": "2:00-2:25", "label": "CAF, Well-Architected, cloud value", "color": "blue"},
+      {"time": "2:25-3:00", "label": "Quiz by weak tags, not all questions", "color": "purple"}
+    ],
+    "repeatedIdeas": [
+      {"label": "Security 183", "desc": "IAM, shared model, audit, compliance, attacks", "color": "red"},
+      {"label": "Billing 86", "desc": "RI, Spot, Savings Plans, budgets, support", "color": "green"},
+      {"label": "Network 64", "desc": "VPC, CloudFront, Route 53, Direct Connect, VPN", "color": "purple"},
+      {"label": "Storage 53", "desc": "S3, EBS, EFS, FSx, Gateway, Snow Family", "color": "amber"},
+      {"label": "Shared model 48", "desc": "AWS cloud vs customer in-cloud duties", "color": "red"},
+      {"label": "Compute 48", "desc": "EC2, Lambda, Fargate, ECS/EKS, Beanstalk", "color": "blue"},
+      {"label": "IAM 36", "desc": "Roles, MFA, root user, Identity Center, policies", "color": "cyan"},
+      {"label": "CAF/WA 59", "desc": "CAF perspectives and Well-Architected pillars", "color": "pink"}
+    ],
+    "solverRules": [
+      {"keyword": "Least operational overhead", "color": "blue", "rule": "Choose managed, serverless, automated. RDS over database on EC2, Lambda/Fargate over EC2, Athena over running analytics servers."},
+      {"keyword": "Most cost-effective", "color": "green", "rule": "Choose based on workload. Short/unpredictable = On-Demand. Steady 1/3 years = Reserved or Savings Plans. Interruptible = Spot. Archive = Glacier."},
+      {"keyword": "Most secure", "color": "red", "rule": "IAM roles, least privilege, MFA, encryption, private connectivity, no hardcoded keys, no root daily use."},
+      {"keyword": "High availability", "color": "purple", "rule": "Multi-AZ, Auto Scaling, Load Balancer, multiple AZs. Disaster recovery/global isolation = multiple Regions."},
+      {"keyword": "Hybrid/on-premises", "color": "amber", "rule": "VPN or Direct Connect for connectivity, Storage Gateway for local access to cloud storage, Snow Family for offline transfer, Outposts for AWS on-prem."},
+      {"keyword": "Multiple response", "color": "cyan", "rule": "If the prompt says choose two, both answers must be right. One right option is still wrong on the real exam."}
+    ],
+    "securitySection": {
+      "title": "Security And IAM: The Highest-Yield Section",
+      "columns": [
+        {
+          "title": "Shared responsibility",
+          "color": "red",
+          "items": [
+            {"prefix": "AWS:", "text": "Data centers, hardware, physical network, hypervisor, managed-service infrastructure."},
+            {"prefix": "Customer:", "text": "Data, IAM, encryption choice, security groups/NACLs, application code, EC2 guest OS."},
+            {"text": "EC2: customer patches OS. RDS: AWS patches host OS/database platform. Lambda: customer owns code/config."}
+          ]
+        },
+        {
+          "title": "Identity choices",
+          "color": "blue",
+          "items": [
+            {"prefix": "IAM user:", "text": "Person/service identity inside one account."},
+            {"prefix": "IAM role:", "text": "Temporary credentials; best for EC2/Lambda/service access."},
+            {"prefix": "IAM policy:", "text": "JSON permissions; least privilege."},
+            {"prefix": "IAM Identity Center:", "text": "Workforce SSO across AWS accounts and apps."},
+            {"prefix": "Cognito:", "text": "Sign-up/sign-in for your application users."}
+          ]
+        },
+        {
+          "title": "Security service chooser",
+          "color": "purple",
+          "items": [
+            {"text": "Audit API calls = CloudTrail."},
+            {"text": "Resource config/compliance = AWS Config."},
+            {"text": "Threat detection = GuardDuty."},
+            {"text": "Vulnerability scan = Inspector."},
+            {"text": "PII/sensitive data in S3 = Macie."},
+            {"text": "Compliance reports = Artifact."},
+            {"text": "Web attack SQLi/XSS = WAF. DDoS = Shield."}
+          ]
+        }
+      ]
+    },
+    "serviceChooserTable": {
+      "title": "Core Services: One-Line Decisions",
+      "rows": [
+        {"area": "Compute", "color": "blue", "choose": "EC2 = virtual machines. Lambda = short event code with no servers. Fargate = serverless containers. ECS/EKS = container orchestration. Elastic Beanstalk = deploy web app quickly. Batch = batch jobs. Lightsail = simple VPS. App Runner = deploy containerized web app from source/image.", "trap": "Lambda is not a normal long-running server. Fargate is still containers, just no server management."},
+        {"area": "Storage", "color": "amber", "choose": "S3 = object storage/static website/data lake. EBS = block disk for EC2. EFS = shared Linux file system. FSx = managed Windows/Lustre/NetApp/OpenZFS. Instance Store = temporary local disk. Storage Gateway = on-premises access to cloud storage. AWS Backup = centralized backup.", "trap": "S3 is object, not block. EBS is not shared across many instances like EFS. Instance Store is lost when stopped/terminated."},
+        {"area": "Database", "color": "green", "choose": "RDS = managed relational SQL. Aurora = AWS cloud-native relational. DynamoDB = serverless NoSQL key-value/document. Redshift = data warehouse. Neptune = graph/fraud relationships. DocumentDB = MongoDB-compatible. ElastiCache/MemoryDB = Redis/in-memory cache. Athena = SQL directly on S3.", "trap": "Redshift is analytics, not app transactions. Athena queries S3; it does not migrate or store data."},
+        {"area": "Network", "color": "purple", "choose": "VPC = isolated network. Security Group = stateful firewall at resource level. NACL = stateless subnet firewall. Route 53 = DNS/domain routing. CloudFront = CDN/cache at edge. Global Accelerator = improve app network path. Direct Connect = dedicated private link. Site-to-Site VPN = encrypted tunnel over internet. PrivateLink = private access to supported services.", "trap": "CloudFront caches content; Global Accelerator accelerates TCP/UDP app traffic. Direct Connect is not the fastest to set up; VPN is faster."},
+        {"area": "Integration", "color": "pink", "choose": "SQS = queue/decouple. SNS = pub/sub push notifications. EventBridge = event bus/SaaS events. Step Functions = workflow orchestration. SES = email. Connect = contact center.", "trap": "SQS pulls and stores messages; SNS pushes to subscribers. Step Functions coordinates steps; it is not a queue."},
+        {"area": "Analytics and AI", "color": "cyan", "choose": "Glue = ETL/catalog. QuickSight = dashboards. Kinesis = streaming data. OpenSearch = search/log analytics. SageMaker = build/train/deploy ML. Rekognition = image/video. Comprehend = NLP. Lex = chatbot. Polly = text-to-speech. Transcribe = speech-to-text. Textract = forms/tables text extraction. Kendra = enterprise search.", "trap": "For CLF-C02, match the use case; do not study ML internals."}
+      ]
+    },
+    "s3Patterns": {
+      "title": "S3 And Storage Patterns",
+      "items": [
+        {"keyword": "S3 Standard:", "color": "amber", "text": "Frequent access, multi-AZ durability/availability."},
+        {"keyword": "S3 Standard-IA:", "color": "amber", "text": "Infrequent access, still multi-AZ."},
+        {"keyword": "S3 One Zone-IA:", "color": "amber", "text": "Cheaper, one AZ, re-creatable infrequent data."},
+        {"keyword": "S3 Glacier Instant Retrieval:", "color": "amber", "text": "Archive with milliseconds access."},
+        {"keyword": "Glacier Flexible / Deep Archive:", "color": "amber", "text": "Lowest-cost archive, retrieval takes minutes to hours."},
+        {"keyword": "Intelligent-Tiering:", "color": "amber", "text": "Unknown/changing access patterns."},
+        {"text": "Versioning: protect from overwrite/delete. Lifecycle = move/delete automatically. Replication = copy across buckets/Regions. Transfer Acceleration = faster uploads over distance."}
+      ]
+    },
+    "pricingPatterns": {
+      "title": "Pricing And Billing Patterns",
+      "items": [
+        {"keyword": "On-Demand:", "color": "green", "text": "Short-term, unpredictable, cannot be interrupted."},
+        {"keyword": "Reserved Instance:", "color": "green", "text": "Steady 1-year/3-year instance usage. Standard = biggest RI discount; Convertible = flexibility."},
+        {"keyword": "Savings Plans:", "color": "green", "text": "Commit dollars/hour; Compute Savings Plans are flexible across EC2, Fargate, Lambda."},
+        {"keyword": "Spot:", "color": "green", "text": "Up to large discounts, interruptible; batch, CI/CD, simulation, fault-tolerant jobs."},
+        {"keyword": "Dedicated Host:", "color": "green", "text": "Physical server for licensing/compliance. Capacity Reservation = capacity guarantee, no discount by itself."},
+        {"text": "Tools: Pricing Calculator = estimate before use. Cost Explorer = history/forecast. Budgets = alerts. CUR = detailed raw report. Compute Optimizer = rightsizing."}
+      ]
+    },
+    "cloudConcepts": {
+      "title": "Cloud Concepts, CAF, Well-Architected",
+      "items": [
+        {"keyword": "Cloud benefits:", "color": "blue", "text": "Trade fixed expense for variable expense, stop guessing capacity, increase speed/agility, go global in minutes, benefit from economies of scale."},
+        {"text": "Elasticity: automatically add/remove resources with demand. Scalability: handle growth. High availability: keep running through failures.", "color": "blue"},
+        {"keyword": "Well-Architected pillars:", "color": "purple", "text": "Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability."},
+        {"keyword": "CAF perspectives:", "color": "purple", "text": "Business, People, Governance, Platform, Security, Operations. People includes cloud fluency. Governance includes risk/portfolio. Business includes strategy/value."}
+      ]
+    },
+    "migrationHybrid": {
+      "title": "Migration, Hybrid, And Governance",
+      "items": [
+        {"keyword": "Application Discovery Service:", "color": "amber", "text": "Collect on-premises server usage/configuration for migration planning."},
+        {"keyword": "Application Migration Service:", "color": "amber", "text": "Lift-and-shift servers to AWS."},
+        {"text": "DMS: migrate databases. SCT: convert database schema.", "color": "amber"},
+        {"text": "DataSync: online data transfer. Transfer Family: SFTP/FTPS/FTP to S3/EFS.", "color": "amber"},
+        {"keyword": "Snow Family:", "color": "amber", "text": "Offline large transfer or edge/disconnected processing."},
+        {"text": "Outposts: AWS infrastructure on-premises. Local Zones: low latency near cities. Wavelength: 5G edge.", "color": "amber"},
+        {"text": "Organizations: multi-account and consolidated billing. Control Tower: landing zone. Service Catalog: approved products/templates.", "color": "cyan"}
+      ]
+    },
+    "multiAnswerPatterns": {
+      "title": "Multiple-Answer Patterns Worth Memorizing",
+      "items": [
+        {"keyword": "EC2 rightsizing:", "color": "green", "text": "Cost Explorer + Compute Optimizer."},
+        {"keyword": "Trusted Advisor benefits:", "color": "green", "text": "Cost optimization + security/performance/fault tolerance/service quota checks."},
+        {"keyword": "Discover, transform, visualize data:", "color": "green", "text": "Glue + QuickSight."},
+        {"keyword": "Budget threshold notification:", "color": "green", "text": "AWS Budgets + CloudWatch/SNS-style notification path."},
+        {"keyword": "Customer shared responsibilities:", "color": "green", "text": "IAM/security groups/data classification/encryption choices/EC2 OS patching."},
+        {"keyword": "Well-Architected pillars:", "color": "green", "text": "Choose from the exact six names only; high availability and scalability are concepts, not pillar names."},
+        {"keyword": "Agility:", "color": "green", "text": "Quick resource implementation + quick experimentation."},
+        {"keyword": "Elasticity:", "color": "green", "text": "Right-size/add/remove resources as demand changes."}
+      ]
+    },
+    "trapPairs": {
+      "title": "Last-Minute Trap Pairs",
+      "items": [
+        {"text": "CloudWatch: metrics/logs/alarms. CloudTrail: API audit. Config: resource configuration.", "color": "blue"},
+        {"text": "Security Group: stateful resource firewall. NACL: stateless subnet firewall.", "color": "blue"},
+        {"text": "Route 53: DNS. CloudFront: CDN. Global Accelerator: network acceleration.", "color": "blue"},
+        {"text": "RDS Multi-AZ: failover. Read replica: read scaling.", "color": "blue"},
+        {"text": "EBS snapshot: backup. AMI: launchable EC2 image.", "color": "blue"},
+        {"text": "Artifact: AWS compliance docs. Audit Manager: collect evidence for audits.", "color": "blue"},
+        {"text": "Personal Health Dashboard: your resources. Service Health Dashboard: regional AWS service status.", "color": "blue"},
+        {"text": "Inbound data: usually free. Outbound/cross-Region: usually charged.", "color": "blue"},
+        {"text": "Root user: only account-level tasks, protect with MFA, no access keys.", "color": "blue"}
+      ]
+    }
+  },
   "questions": [
     {
       "q": "A company plans to use an Amazon Snowball Edge device to transfer files to the AWS Cloud. Which activities related to a Snowball Edge device are available to the company at no cost?",

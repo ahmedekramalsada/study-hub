@@ -42,7 +42,6 @@
       "questionTotal": 719,
       "data": "data/aws-clf.json",
       "storageKey": "aws-clf-full",
-      "legacyPage": "cloud-practitioner.html",
       "description": "Core cloud concepts, IAM, security, services, billing, architecture, and support.",
       "studyPlan": [
         "Security, IAM, and shared responsibility",
@@ -144,7 +143,6 @@
       "questionTotal": 334,
       "data": "data/aws-aif.json",
       "storageKey": "aws-aif-full",
-      "legacyPage": "untitled%20folder/index.html",
       "description": "AI/ML fundamentals, generative AI, Bedrock, SageMaker, responsible AI, and governance.",
       "studyPlan": [
         "AI/ML basics, learning types, and evaluation metrics",

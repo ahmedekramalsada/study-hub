@@ -347,6 +347,87 @@
       ]
     }
   ],
+  "cramSheet": {
+    "studyPlanTimeline": [
+      {"time": "0:00-0:35", "label": "AI/ML basics, learning types, metrics", "color": "blue"},
+      {"time": "0:35-1:20", "label": "GenAI, prompts, tokens, RAG, FMs", "color": "purple"},
+      {"time": "1:20-2:10", "label": "Bedrock, SageMaker, AI service chooser", "color": "cyan"},
+      {"time": "2:10-2:50", "label": "Responsible AI, evaluation, governance", "color": "amber"},
+      {"time": "2:50-4:00", "label": "Wrong/unseen questions and exam traps", "color": "red"}
+    ],
+    "domainWeights": [
+      {"label": "20%", "desc": "AI/ML fundamentals", "color": "blue"},
+      {"label": "24%", "desc": "Generative AI fundamentals", "color": "purple"},
+      {"label": "28%", "desc": "Foundation model applications", "color": "cyan"},
+      {"label": "14%", "desc": "Responsible AI", "color": "amber"},
+      {"label": "14%", "desc": "Security, compliance, governance", "color": "red"}
+    ],
+    "solverRules": [
+      {"keyword": "Labels available", "color": "blue", "rule": "Supervised learning. Categories = classification; numbers = regression."},
+      {"keyword": "No labels", "color": "blue", "rule": "Unsupervised learning, clustering, anomaly detection, autoencoders."},
+      {"keyword": "Change tone/format/length cheaply", "color": "purple", "rule": "Prompt engineering first."},
+      {"keyword": "Need current/private facts", "color": "purple", "rule": "RAG or Bedrock Knowledge Bases, not fine-tuning."},
+      {"keyword": "Build GenAI app quickly", "color": "cyan", "rule": "Bedrock. Build/custom train ML lifecycle: SageMaker AI."},
+      {"keyword": "Fairness/explainability", "color": "amber", "rule": "Balanced data, bias checks, Clarify, Model Cards, human review."},
+      {"keyword": "Security", "color": "red", "rule": "IAM least privilege, CloudTrail audit, KMS encryption, PrivateLink, Macie, Artifact/Audit Manager."},
+      {"keyword": "Choose two", "color": "green", "rule": "Select all correct controls. One right answer is still wrong if the prompt asks for two."}
+    ],
+    "serviceChooserTable": {
+      "title": "AWS AI Service Chooser",
+      "rows": [
+        {"area": "Foundation models / GenAI apps", "color": "cyan", "choose": "Amazon Bedrock", "trap": "SageMaker is broader custom ML lifecycle; Bedrock is managed FM access, agents, knowledge bases, guardrails."},
+        {"area": "No-code ML", "color": "cyan", "choose": "SageMaker Canvas", "trap": "PartyRock is for GenAI app experiments, not general ML prediction models."},
+        {"area": "Label data", "color": "cyan", "choose": "SageMaker Ground Truth / Ground Truth Plus", "trap": "Feature Store shares features; Data Wrangler prepares data."},
+        {"area": "Bias/explainability", "color": "cyan", "choose": "SageMaker Clarify", "trap": "Model Cards document; Clarify analyzes bias/explanations."},
+        {"area": "Text NLP/sentiment/entities", "color": "cyan", "choose": "Amazon Comprehend", "trap": "Lex builds chatbots; Polly speaks; Transcribe listens."},
+        {"area": "Documents/forms/tables", "color": "cyan", "choose": "Amazon Textract", "trap": "Rekognition is images/video; Textract is document text extraction."},
+        {"area": "Employee assistant over internal data", "color": "cyan", "choose": "Amazon Q Business", "trap": "Q Developer helps write/review code inside the developer workflow."},
+        {"area": "Recommendations", "color": "cyan", "choose": "Amazon Personalize", "trap": "Kendra is enterprise search, not recommendations from user history."}
+      ]
+    },
+    "promptRagSection": {
+      "title": "Prompt, RAG, Fine-Tuning, Pre-Training",
+      "items": [
+        {"keyword": "Prompt engineering:", "color": "purple", "text": "Fastest and cheapest for style, format, language, tone, examples, and output limits."},
+        {"keyword": "RAG:", "color": "purple", "text": "Use external knowledge. Best for changing facts, policies, manuals, FAQs, and private company documents."},
+        {"keyword": "Fine-tuning:", "color": "purple", "text": "Use labeled prompt/completion examples to specialize behavior."},
+        {"keyword": "Continued pre-training:", "color": "purple", "text": "Use unlabeled domain data to add specialized knowledge."},
+        {"keyword": "Pre-training from scratch:", "color": "purple", "text": "Highest cost, highest effort, highest customer responsibility."}
+      ]
+    },
+    "responsibleAiSection": {
+      "title": "Responsible AI And Security",
+      "items": [
+        {"keyword": "Bias/fairness:", "color": "amber", "text": "Representative data, imbalance detection, bias metrics, human review."},
+        {"keyword": "Explainability:", "color": "amber", "text": "PDPs, feature attribution, Clarify, interpretable models."},
+        {"keyword": "Transparency:", "color": "amber", "text": "Model Cards, documented limits, intended use, datasets, evaluation results."},
+        {"keyword": "Security:", "color": "red", "text": "IAM policies, service roles, KMS, PrivateLink, CloudTrail, CloudWatch, Macie."},
+        {"keyword": "Governance:", "color": "red", "text": "Data retention, data residency, compliance evidence, Audit Manager, Artifact."}
+      ]
+    },
+    "metricsSection": {
+      "title": "Metrics And Model Terms",
+      "items": [
+        {"keyword": "Accuracy:", "color": "blue", "text": "Overall correct classifications. Weak when classes are imbalanced."},
+        {"keyword": "Precision:", "color": "blue", "text": "Reduce false positives. Recall: reduce false negatives. F1: balance both."},
+        {"keyword": "Regression:", "color": "blue", "text": "RMSE/MSE/R-squared for numeric predictions."},
+        {"keyword": "Text generation:", "color": "purple", "text": "BLEU/ROUGE/BERTScore plus human evaluation."},
+        {"keyword": "Latency:", "color": "green", "text": "Real-time user experience. Throughput/cost: operational efficiency."},
+        {"keyword": "Business:", "color": "amber", "text": "Conversion rate, cost per conversation, AHT, ticket reduction, revenue impact."}
+      ]
+    },
+    "trapPairs": {
+      "title": "Last-Minute Trap Pairs",
+      "items": [
+        {"text": "Comprehend: text understanding. Lex: chatbot. Polly: text-to-speech.", "color": "blue"},
+        {"text": "Transcribe: speech-to-text. Translate: language translation.", "color": "blue"},
+        {"text": "Textract: document text/forms/tables. Rekognition: image/video.", "color": "blue"},
+        {"text": "Clarify: bias/explainability. Model Monitor: drift/quality.", "color": "blue"},
+        {"text": "Q Business: employee business assistant. Q Developer: developer coding assistant.", "color": "blue"},
+        {"text": "Artifact: compliance reports. Audit Manager: audit evidence.", "color": "blue"}
+      ]
+    }
+  },
   "questions": [
     {
       "q": "A company makes forecasts each quarter to decide how to optimize operations. An AI practitioner is writing a report to provide transparency and explainability to stakeholders. What should be included?",
