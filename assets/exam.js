@@ -304,6 +304,7 @@ function bindEvents() {
 function showTab(tab) {
     document.querySelectorAll('[data-tab]').forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
     document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.toggle('hidden', panel.id !== tab));
+    if (tab === 'quiz') renderQuiz();
     if (tab === 'review') renderReview();
     if (tab === 'learn') renderConcepts();
     if (tab === 'keywords') renderKeywords();

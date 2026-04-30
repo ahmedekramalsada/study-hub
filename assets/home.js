@@ -93,7 +93,6 @@ function renderExam(exam, progress) {
             </div>
             <div class="button-row">
                 <a class="link-btn primary" href="exam.html?exam=${encodeURIComponent(exam.id)}">Open study site</a>
-                <a class="link-btn" href="${escapeAttr(exam.legacyPage)}">Old static page</a>
                 <button class="reset-btn" type="button" data-reset-key="${escapeAttr(exam.storageKey)}">Reset progress</button>
             </div>
             <span class="muted">${escapeHtml(updated)}</span>
