@@ -259,6 +259,14 @@ button {
     padding: 18px;
 }
 
+.exam-card .bar-fill {
+    background: linear-gradient(90deg, var(--accent, #4ade80), var(--accent, #10b981));
+}
+
+.exam-card .link-btn.primary {
+    background: linear-gradient(135deg, var(--accent, #3b82f6), var(--accent, #1d4ed8));
+}
+
 .stat strong,
 .metric strong {
     display: block;
@@ -726,6 +734,82 @@ button {
     padding: 20px 0 32px;
     color: var(--muted);
     font-size: 13px;
+}
+
+.footer .shell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.footer strong {
+    color: var(--text);
+}
+
+.footer-divider {
+    opacity: 0.4;
+}
+
+/* Loading skeleton */
+.loading-skeleton {
+    display: grid;
+    gap: 14px;
+    padding: 24px 0;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.loading-skeleton.hidden {
+    display: none;
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.skeleton-head {
+    height: 24px;
+    width: 40%;
+    border-radius: 6px;
+    background: rgba(148, 163, 184, 0.12);
+}
+
+.skeleton-line {
+    height: 16px;
+    width: 100%;
+    border-radius: 6px;
+    background: rgba(148, 163, 184, 0.08);
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 80%;
+}
+
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.skeleton-card {
+    height: 120px;
+    border-radius: 12px;
+    background: rgba(148, 163, 184, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.shortcuts-hint {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 8px 0 0;
 }
 
 @media (max-width: 900px) {

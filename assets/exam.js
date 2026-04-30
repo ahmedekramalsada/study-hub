@@ -127,10 +127,14 @@ async function init() {
 function setupUi() {
     document.documentElement.style.setProperty('--accent', app.exam.accent || '#f59e0b');
     document.title = `${app.exam.provider} ${app.exam.code} ${app.exam.title}`;
+    el.badge.style.background = app.exam.accent ? `linear-gradient(135deg, ${app.exam.accent}, ${app.exam.accent})` : '';
     el.badge.textContent = app.exam.badge || app.exam.provider;
     el.title.textContent = `${app.exam.code} ${app.exam.title}`;
     el.subtitle.textContent = `${app.exam.provider} | ${app.questions.length} questions`;
     el.jumpInput.max = app.questions.length;
+
+    document.getElementById('footer-exam-name').textContent = `${app.exam.provider} ${app.exam.code} ${app.exam.title}`;
+    document.getElementById('footer-question-count').textContent = `${app.questions.length} questions`;
 
     const siblingLinks = app.config.exams
         .filter((exam) => exam.status === 'live' && exam.id !== app.exam.id)
@@ -138,8 +142,12 @@ function setupUi() {
         .join('');
     el.links.innerHTML = siblingLinks;
 
+    document.getElementById('loading-skeleton').classList.add('hidden');
+
     renderFilterTags();
     renderSessionButtons();
+    highlightActiveSession('all');
+    highlightActiveFilter('all');
     renderCheatSheet();
 }
 
@@ -156,9 +164,11 @@ function bindEvents() {
         app.currentQuestions = getStudyOrderedQuestions(results);
         app.currentIdx = 0;
         app.sessionName = `Search: ${term}`;
+        highlightActiveSession(null);
+        highlightActiveFilter('all');
         showTab('quiz');
         renderQuiz();
-        saveProgress();
+        debounceUpdateProgress();
     });
 
     document.getElementById('jump-btn').addEventListener('click', () => jumpToQuestion(el.jumpInput.value));
@@ -185,8 +195,10 @@ function bindEvents() {
         app.currentQuestions = [...app.currentQuestions].sort(() => Math.random() - 0.5);
         app.currentIdx = 0;
         app.sessionName = `${app.sessionName} shuffled`;
+        highlightActiveSession(null);
+        highlightActiveFilter('all');
         renderQuiz();
-        saveProgress();
+        debounceUpdateProgress();
     });
 
     document.getElementById('reset-btn').addEventListener('click', () => {
@@ -196,6 +208,8 @@ function bindEvents() {
         app.currentIdx = 0;
         app.currentQuestions = getStudyOrderedQuestions(app.questions);
         app.sessionName = 'Smart order: unique ideas first';
+        highlightActiveSession('all');
+        highlightActiveFilter('all');
         renderAll();
     });
 
@@ -216,14 +230,14 @@ function bindEvents() {
         if (app.currentIdx <= 0) return;
         app.currentIdx -= 1;
         renderQuiz();
-        saveProgress();
+        debounceUpdateProgress();
     });
 
     el.next.addEventListener('click', () => {
         if (app.currentIdx < app.currentQuestions.length - 1) {
             app.currentIdx += 1;
             renderQuiz();
-            saveProgress();
+            debounceUpdateProgress();
             return;
         }
         const stats = calculateStats();
@@ -245,9 +259,11 @@ function bindEvents() {
         app.currentQuestions = [question];
         app.currentIdx = 0;
         app.sessionName = `Review PDF Q${question.n}`;
+        highlightActiveSession(null);
+        highlightActiveFilter('all');
         showTab('quiz');
         renderQuiz();
-        saveProgress();
+        debounceUpdateProgress();
     });
 
     el.conceptSearch.addEventListener('input', (event) => {
@@ -268,7 +284,7 @@ function bindEvents() {
         startConceptSession(button.dataset.conceptName);
     });
 
-    document.getElementById('cheatsheet-concepts').addEventListener('click', (event) => {
+    document.getElementById('cheatsheet').addEventListener('click', (event) => {
         const button = event.target.closest('[data-concept-name]');
         if (!button) return;
         startConceptSession(button.dataset.conceptName);
@@ -286,11 +302,11 @@ function bindEvents() {
         if (key === 'arrowleft' && app.currentIdx > 0) {
             app.currentIdx -= 1;
             renderQuiz();
-            saveProgress();
+            debounceUpdateProgress();
         } else if (key === 'arrowright' && app.currentIdx < app.currentQuestions.length - 1) {
             app.currentIdx += 1;
             renderQuiz();
-            saveProgress();
+            debounceUpdateProgress();
         } else if (key >= 'a' && key <= 'e') {
             const index = key.charCodeAt(0) - 97;
             const option = el.options.querySelectorAll('[data-option]')[index];
@@ -302,14 +318,25 @@ function bindEvents() {
 }
 
 function showTab(tab) {
+    const isQuizTab = tab === 'quiz';
     document.querySelectorAll('[data-tab]').forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
     document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.toggle('hidden', panel.id !== tab));
-    if (tab === 'quiz') renderQuiz();
+    if (isQuizTab) renderQuiz();
     if (tab === 'review') renderReview();
     if (tab === 'learn') renderConcepts();
     if (tab === 'keywords') renderKeywords();
     if (tab === 'analytics') renderAnalytics();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+let updateProgressTimer = null;
+function debounceUpdateProgress() {
+    if (updateProgressTimer) return;
+    updateProgressTimer = setTimeout(() => {
+        updateProgressTimer = null;
+        updateProgress();
+        saveProgress();
+    }, 100);
 }
 
 function renderAll() {
@@ -325,9 +352,15 @@ function renderAll() {
 function renderFilterTags() {
     const tags = app.exam.filterTags || getTopTags(8).map(([tag]) => tag);
     el.filterTags.innerHTML = [
-        '<button class="chip-btn active" type="button" data-filter-tag="all">All</button>',
+        '<button class="chip-btn" type="button" data-filter-tag="all">All</button>',
         ...tags.map((tag) => `<button class="chip-btn" type="button" data-filter-tag="${escapeAttr(tag)}">${escapeHtml(labelize(tag))}</button>`)
     ].join('');
+}
+
+function highlightActiveFilter(tag) {
+    document.querySelectorAll('[data-filter-tag]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.filterTag === tag);
+    });
 }
 
 function renderSessionButtons() {
@@ -342,6 +375,12 @@ function renderSessionButtons() {
     el.sessionButtons.innerHTML = [...base, ...focus]
         .map(([id, label]) => `<button class="chip-btn" type="button" data-session="${escapeAttr(id)}">${escapeHtml(label)}</button>`)
         .join('');
+}
+
+function highlightActiveSession(sessionId) {
+    document.querySelectorAll('[data-session]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.session === sessionId);
+    });
 }
 
 function renderCheatSheet() {
@@ -763,16 +802,19 @@ function startSession(type) {
         alert('No questions in this session yet.');
         app.currentQuestions = getStudyOrderedQuestions(app.questions);
         app.sessionName = 'Smart order: unique ideas first';
+        type = 'all';
     }
 
+    highlightActiveSession(type);
+    highlightActiveFilter('all');
     app.currentIdx = 0;
     showTab('quiz');
     renderQuiz();
-    saveProgress();
+    debounceUpdateProgress();
 }
 
 function startTagSession(tag) {
-    document.querySelectorAll('[data-filter-tag]').forEach((button) => button.classList.toggle('active', button.dataset.filterTag === tag));
+    highlightActiveFilter(tag);
     if (tag === 'all') {
         startSession('all');
         return;
@@ -781,9 +823,10 @@ function startTagSession(tag) {
     app.currentQuestions = getStudyOrderedQuestions(matches);
     app.currentIdx = 0;
     app.sessionName = `${labelize(tag)} questions`;
+    highlightActiveSession(null);
     showTab('quiz');
     renderQuiz();
-    saveProgress();
+    debounceUpdateProgress();
 }
 
 function startConceptSession(name) {
@@ -800,9 +843,11 @@ function startConceptSession(name) {
     }
     app.currentIdx = 0;
     app.sessionName = `${concept.name} concept quiz`;
+    highlightActiveSession(null);
+    highlightActiveFilter('all');
     showTab('quiz');
     renderQuiz();
-    saveProgress();
+    debounceUpdateProgress();
 }
 
 function jumpToQuestion(value) {
@@ -814,10 +859,12 @@ function jumpToQuestion(value) {
     app.currentQuestions = [...app.questions];
     app.currentIdx = num - 1;
     app.sessionName = `PDF Q${num}`;
+    highlightActiveSession(null);
+    highlightActiveFilter('all');
     el.jumpInput.value = String(num);
     showTab('quiz');
     renderQuiz();
-    saveProgress();
+    debounceUpdateProgress();
 }
 
 function loadProgress() {

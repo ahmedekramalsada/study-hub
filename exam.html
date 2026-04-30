@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Exam</title>
+    <title>AWS Certification Study Exam</title>
+    <meta name="description" content="AWS certification practice exam with interactive quiz, cram sheet, concept library, and progress tracking. CLF-C02 Cloud Practitioner and AIF-C01 AI Practitioner.">
+    <meta property="og:title" content="AWS Certification Study System">
+    <meta property="og:description" content="Interactive AWS certification practice with 719+ Cloud Practitioner and 334+ AI Practitioner questions.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
     <link rel="stylesheet" href="assets/study-lab.css">
     <script src="assets/exam.js" defer></script>
 </head>
@@ -47,6 +53,18 @@
     </nav>
 
     <main class="shell layout">
+        <div class="loading-skeleton" id="loading-skeleton">
+            <div class="skeleton-head"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-grid">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+        </div>
+
         <p class="panel hidden" id="exam-error"></p>
 
         <section class="tab-panel panel" id="cheatsheet">
@@ -91,6 +109,7 @@
                     <button class="action-btn" type="button" id="prev-btn">Previous</button>
                     <button class="action-btn primary" type="button" id="next-btn">Next</button>
                 </div>
+                <p class="shortcuts-hint" id="shortcuts-hint">⌨️ Arrow keys = navigate · A-E = select answer · Enter = submit multi-answer</p>
             </div>
         </section>
 
@@ -161,5 +180,14 @@
             <div class="domain-grid" id="domain-stats"></div>
         </section>
     </main>
+
+    <footer class="footer">
+        <div class="shell">
+            <strong id="footer-exam-name">AWS Certification Study System</strong>
+            <span id="footer-question-count">719 questions</span>
+            <span class="footer-divider">·</span>
+            <span>Progress saves automatically in your browser</span>
+        </div>
+    </footer>
 </body>
 </html>

@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Home Lab</title>
+    <title>Study Home Lab — AWS Certification Practice</title>
+    <meta name="description" content="AWS certification study platform with 1,000+ interactive practice questions. Cloud Practitioner CLF-C02 and AI Practitioner AIF-C01 with cram sheets, concepts, and analytics.">
+    <meta property="og:title" content="Study Home Lab — AWS Certification Practice">
+    <meta property="og:description" content="AWS certification study with 1,000+ questions. Interactive quiz, cram sheet, concept library, and progress tracking.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
     <link rel="stylesheet" href="assets/study-lab.css">
     <script src="assets/home.js" defer></script>
 </head>
@@ -14,7 +20,7 @@
                 <span class="brand-mark">LAB</span>
                 <span>
                     <span class="brand-title">Study Home Lab</span>
-                    <span class="brand-subtitle">Dynamic certification practice websites</span>
+                    <span class="brand-subtitle">AWS certification practice</span>
                 </span>
             </a>
             <nav class="top-actions" aria-label="Primary">
@@ -28,7 +34,7 @@
             <div class="hero-copy">
                 <div class="eyebrow">Multi-cloud study home lab</div>
                 <h1 id="home-title">One dynamic app for every exam website.</h1>
-                <p>AWS is active now. Azure, Kubernetes, and Google Cloud can be added by dropping in a new JSON question bank and one metadata entry. Progress saves in this browser for each exam.</p>
+                <p>AWS is active now. Azure, Kubernetes, and Google Cloud can be added by dropping in a new JSON question bank and one metadata entry. Progress saves in your browser for each exam.</p>
                 <div class="stats-grid" aria-label="Study lab totals">
                     <div class="stat"><strong id="active-sites">0</strong><span>active sites</span></div>
                     <div class="stat"><strong id="provider-tracks">0</strong><span>provider tracks</span></div>
@@ -45,17 +51,17 @@
                     </div>
                     <div class="flow-card">
                         <b>Reusable Exam Page</b>
-                        <span>One `exam.html` loads the right JSON data by URL query.</span>
+                        <span>One exam page loads the right JSON data by URL query.</span>
                     </div>
                 </div>
                 <div class="flow-grid">
                     <div class="flow-card">
                         <b>Question Bank</b>
-                        <span>`data/*.json` stores questions, concepts, and domains.</span>
+                        <span>JSON files store questions, concepts, and domains.</span>
                     </div>
                     <div class="flow-card">
                         <b>Progress Memory</b>
-                        <span>`localStorage` keeps progress private to each browser profile.</span>
+                        <span>localStorage keeps progress private to each browser profile.</span>
                     </div>
                 </div>
                 <span class="muted" id="last-updated">No saved progress yet</span>
@@ -78,7 +84,7 @@
             <div class="section-head">
                 <div>
                     <h2 id="active-title">Active Study Websites</h2>
-                    <p>These cards are generated from `data/exams.json` and read saved progress from localStorage.</p>
+                    <p>These cards are generated from JSON metadata and read saved progress from localStorage.</p>
                 </div>
             </div>
             <div class="exam-grid" id="exam-grid"></div>
@@ -86,7 +92,7 @@
     </main>
 
     <footer class="footer">
-        <div class="shell">Use a local server URL for the dynamic JSON files. A different browser, private window, or device has separate saved progress.</div>
+        <div class="shell">Study Home Lab · Progress saves automatically in your browser · A different browser or device has separate saved progress.</div>
     </footer>
 </body>
 </html>

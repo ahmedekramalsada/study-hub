@@ -69,10 +69,11 @@ function renderExam(exam, progress) {
     const percent = Math.round((progress.answered / exam.questionTotal) * 100);
     const accuracy = progress.answered ? Math.round((progress.correct / progress.answered) * 100) : 0;
     const remaining = Math.max(exam.questionTotal - progress.answered, 0);
+    const savedQuestion = progress.answered > 0 ? progress.current : 0;
     const updated = progress.updatedAt ? `Last saved ${new Date(progress.updatedAt).toLocaleString()}` : 'No saved progress yet';
 
     return `
-        <article class="exam-card">
+        <article class="exam-card" style="--accent: ${escapeAttr(exam.accent || '#f59e0b')}">
             <div class="exam-head">
                 <div>
                     <span class="muted">${escapeHtml(exam.provider)} | ${escapeHtml(exam.code)}</span>
@@ -83,12 +84,12 @@ function renderExam(exam, progress) {
             <p>${escapeHtml(exam.description)}</p>
             <div class="progress-wrap">
                 <strong>${progress.answered}/${exam.questionTotal}</strong>
-                <div class="bar" aria-hidden="true"><div class="bar-fill" style="width: ${percent}%"></div></div>
+                <div class="bar" aria-hidden="true"><div class="bar-fill" style="width: ${percent}%; background: linear-gradient(90deg, ${escapeAttr(exam.accent || '#22c55e')}, ${escapeAttr(exam.accent || '#10b981')})"></div></div>
                 <span class="muted">${percent}%</span>
             </div>
             <div class="metric-grid">
                 <div class="metric"><strong>${accuracy}%</strong><span>accuracy</span></div>
-                <div class="metric"><strong>${progress.current}</strong><span>saved question</span></div>
+                <div class="metric"><strong>${savedQuestion}</strong><span>saved question</span></div>
                 <div class="metric"><strong>${remaining}</strong><span>remaining</span></div>
             </div>
             <div class="button-row">
@@ -103,6 +104,7 @@ function renderExam(exam, progress) {
 function readProgress(exam) {
     try {
         const saved = JSON.parse(localStorage.getItem(exam.storageKey) || 'null');
+        if (!saved) return { answered: 0, correct: 0, current: 0, updatedAt: null };
         const answers = saved && saved.a ? saved.a : {};
         let answered = 0;
         let correct = 0;
@@ -121,7 +123,7 @@ function readProgress(exam) {
             updatedAt: saved && saved.updatedAt ? saved.updatedAt : null
         };
     } catch (error) {
-        return { answered: 0, correct: 0, current: 1, updatedAt: null };
+        return { answered: 0, correct: 0, current: 0, updatedAt: null };
     }
 }
 
