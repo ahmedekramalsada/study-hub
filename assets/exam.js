@@ -14,6 +14,7 @@ const app = {
     pending: [],
     pendingQuestionId: null,
     savedQuestionId: null,
+    starred: [],  // Questions marked for later review
     sessionName: 'Smart order: unique ideas first',
     reviewFilter: 'all',
     conceptCategory: 'All',
@@ -211,6 +212,12 @@ function bindEvents() {
         highlightActiveSession('all');
         highlightActiveFilter('all');
         renderAll();
+    });
+
+    el.questionText.addEventListener('click', (event) => {
+        const starBtn = event.target.closest('[data-star]');
+        if (!starBtn) return;
+        toggleStar(starBtn.dataset.star);
     });
 
     el.options.addEventListener('click', (event) => {
@@ -529,7 +536,7 @@ function renderQuiz() {
 
     el.sessionLabel.textContent = `Session: ${app.sessionName} (${app.currentQuestions.length} questions)`;
     el.questionCounter.textContent = `Question ${app.currentIdx + 1} of ${app.currentQuestions.length} (PDF Q${question.n})`;
-    el.questionText.textContent = question.q;
+    el.questionText.innerHTML = `${escapeHtml(question.q)} <button class="star-btn" type="button" data-star="${escapeAttr(question.id)}" aria-label="${app.starred.includes(question.id) ? 'Unstar' : 'Star'} question">${app.starred.includes(question.id) ? '★' : '☆'}</button>`;
     el.questionTags.innerHTML = [
         `<span class="tag domain-tag">${escapeHtml(app.domains[String(question.domain)] || 'Domain')}</span>`,
         `<span class="tag">${isUniqueQuestion(question) ? 'Unique idea' : 'Repeat pattern'}</span>`,
@@ -643,13 +650,18 @@ function renderReview() {
     const stats = calculateStats();
     el.reviewSummary.textContent = `${stats.answered} answered, ${stats.correct} correct, ${stats.wrong} wrong, ${stats.unseen} unseen.`;
     const rows = app.questions
-        .filter((question) => app.reviewFilter === 'all' || getQuestionStatus(question) === app.reviewFilter)
+        .filter((question) => {
+            if (app.reviewFilter === 'all') return true;
+            if (app.reviewFilter === 'starred') return app.starred.includes(question.id);
+            return getQuestionStatus(question) === app.reviewFilter;
+        })
         .map((question) => {
             const status = getQuestionStatus(question);
+            const starIcon = app.starred.includes(question.id) ? '★ ' : '';
             return `
                 <article class="review-item" data-review-q="${escapeAttr(question.id)}">
                     <div class="review-head">
-                        <strong>PDF Q${question.n}: ${escapeHtml(question.q)}</strong>
+                        <strong>${starIcon}PDF Q${question.n}: ${escapeHtml(question.q)}</strong>
                         <span class="answer-pill">${escapeHtml(labelize(status))}</span>
                     </div>
                     <span class="muted">${escapeHtml(question.explain || '')}</span>
@@ -926,6 +938,7 @@ function loadProgress() {
         const saved = JSON.parse(localStorage.getItem(app.exam.storageKey) || 'null');
         if (!saved) return;
         app.savedQuestionId = saved.qid || null;
+        app.starred = Array.isArray(saved.starred) ? saved.starred : [];
         app.answered = {};
         Object.entries(saved.a || {}).forEach(([key, value]) => {
             const id = key.startsWith('q-') ? key : `q-${Number(key) + 1}`;
@@ -957,8 +970,19 @@ function saveProgress() {
         qn: current ? current.n : null,
         session: app.sessionName,
         total: app.questions.length,
+        starred: app.starred,
         updatedAt: new Date().toISOString()
     }));
+}
+
+function toggleStar(questionId) {
+    if (app.starred.includes(questionId)) {
+        app.starred = app.starred.filter((id) => id !== questionId);
+    } else {
+        app.starred.push(questionId);
+    }
+    saveProgress();
+    renderQuiz();
 }
 
 function getCurrentQuestion() {
