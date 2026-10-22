@@ -1,0 +1,235 @@
+{
+  "app": {
+    "name": "Study Home Lab",
+    "description": "A local dynamic frontend for certification study websites with browser-saved progress."
+  },
+  "providers": [
+    {
+      "id": "aws",
+      "name": "AWS",
+      "status": "live",
+      "description": "Cloud Practitioner and AI Practitioner are active now."
+    },
+    {
+      "id": "azure",
+      "name": "Azure",
+      "status": "planned",
+      "description": "Ready for AZ-900, AI-900, SC-900, and future Microsoft exams."
+    },
+    {
+      "id": "kubernetes",
+      "name": "Kubernetes",
+      "status": "planned",
+      "description": "Ready for KCNA, CKA, CKAD, and cluster lab practice."
+    },
+    {
+      "id": "gcp",
+      "name": "Google Cloud",
+      "status": "planned",
+      "description": "Ready for Cloud Digital Leader, ACE, and professional exams."
+    }
+  ],
+  "exams": [
+    {
+      "id": "aws-clf",
+      "providerId": "aws",
+      "provider": "AWS",
+      "code": "CLF-C02",
+      "title": "Cloud Practitioner",
+      "badge": "AWS",
+      "status": "live",
+      "accent": "#f59e0b",
+      "questionTotal": 719,
+      "data": "data/aws-clf.json",
+      "storageKey": "aws-clf-full",
+      "description": "Core cloud concepts, IAM, security, services, billing, architecture, and support.",
+      "studyPlan": [
+        "Security, IAM, and shared responsibility",
+        "Compute, storage, databases, and networking",
+        "Pricing, billing, support, CAF, and Well-Architected",
+        "Review wrong answers and repeated service-choice patterns"
+      ],
+      "links": [
+        {
+          "label": "AWS exam guide",
+          "href": "https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html"
+        },
+        {
+          "label": "Well-Architected",
+          "href": "https://aws.amazon.com/architecture/well-architected/"
+        },
+        {
+          "label": "AWS CAF",
+          "href": "https://aws.amazon.com/cloud-adoption-framework/"
+        }
+      ],
+      "filterTags": [
+        "security",
+        "compute",
+        "storage",
+        "database",
+        "network",
+        "billing"
+      ],
+      "focusSessions": [
+        {
+          "id": "security",
+          "label": "Security cram",
+          "tags": ["security", "iam", "shared-responsibility"]
+        }
+      ],
+      "keywordTriggers": [
+        {
+          "category": "Infrastructure & Network",
+          "items": [
+            ["global low latency", "CloudFront"],
+            ["DNS routing", "Route 53"],
+            ["private network", "VPC"],
+            ["connect on-prem", "Direct Connect / VPN"],
+            ["central hub VPCs", "Transit Gateway"],
+            ["NAT", "Private subnet outbound only"]
+          ]
+        },
+        {
+          "category": "Compute & Storage",
+          "items": [
+            ["serverless", "Lambda / Fargate"],
+            ["object storage", "S3"],
+            ["block for EC2", "EBS"],
+            ["archive", "S3 Glacier"],
+            ["Windows file SMB", "FSx"],
+            ["shared Linux", "EFS"]
+          ]
+        },
+        {
+          "category": "Security & Compliance",
+          "items": [
+            ["audit API", "CloudTrail"],
+            ["compliance reports", "Artifact"],
+            ["threat detection", "GuardDuty"],
+            ["SQL injection", "WAF"],
+            ["DDoS", "Shield"],
+            ["PII in S3", "Macie"]
+          ]
+        },
+        {
+          "category": "Cost & Management",
+          "items": [
+            ["cost-effective", "Managed / serverless"],
+            ["steady workload", "Reserved / Savings Plans"],
+            ["interruptible", "Spot Instances"],
+            ["visualize costs", "Cost Explorer"],
+            ["budget alerts", "AWS Budgets"],
+            ["single bill", "Organizations"]
+          ]
+        }
+      ],
+      "guessingRules": [
+        "Most automated or managed solution",
+        "Most secure by default",
+        "Most cost-effective for the scenario",
+        "Most scalable and elastic"
+      ]
+    },
+    {
+      "id": "aws-aif",
+      "providerId": "aws",
+      "provider": "AWS",
+      "code": "AIF-C01",
+      "title": "AI Practitioner",
+      "badge": "AI",
+      "status": "live",
+      "accent": "#38bdf8",
+      "questionTotal": 334,
+      "data": "data/aws-aif.json",
+      "storageKey": "aws-aif-full",
+      "description": "AI/ML fundamentals, generative AI, Bedrock, SageMaker, responsible AI, and governance.",
+      "studyPlan": [
+        "AI/ML basics, learning types, and evaluation metrics",
+        "Generative AI, prompts, tokens, RAG, and foundation models",
+        "Bedrock, SageMaker, and AWS AI service matching",
+        "Responsible AI, security, compliance, and governance"
+      ],
+      "links": [
+        {
+          "label": "AWS exam guide",
+          "href": "https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html"
+        },
+        {
+          "label": "In-scope services",
+          "href": "https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/aif-01-in-scope-services.html"
+        }
+      ],
+      "filterTags": [
+        "genai",
+        "bedrock",
+        "sagemaker",
+        "responsible-ai",
+        "security",
+        "evaluation",
+        "ai-services"
+      ],
+      "focusSessions": [
+        {
+          "id": "genai",
+          "label": "GenAI/Bedrock cram",
+          "tags": ["genai", "bedrock", "prompt", "rag"]
+        },
+        {
+          "id": "security",
+          "label": "Security/RAI cram",
+          "tags": ["security", "responsible-ai"]
+        }
+      ],
+      "keywordTriggers": [
+        {
+          "category": "GenAI And Prompting",
+          "items": [
+            ["private/current documents", "RAG / Bedrock Knowledge Bases"],
+            ["tone, format, language", "Prompt engineering"],
+            ["examples in prompt", "Few-shot prompting"],
+            ["exclude objects", "Negative prompt"],
+            ["max tokens in prompt", "Context window"]
+          ]
+        },
+        {
+          "category": "AWS AI Services",
+          "items": [
+            ["foundation models", "Bedrock"],
+            ["no-code ML", "SageMaker Canvas"],
+            ["clinical notes", "AWS HealthScribe"],
+            ["employee internal data", "Amazon Q Business"],
+            ["code/test/docs", "Amazon Q Developer"]
+          ]
+        },
+        {
+          "category": "Responsible AI",
+          "items": [
+            ["skewed outcomes", "Bias / fairness"],
+            ["why decision happened", "Explainability / Clarify"],
+            ["document model limits", "Model Cards / transparency"],
+            ["unsafe content", "Bedrock Guardrails"],
+            ["human review", "Human-in-the-loop"]
+          ]
+        },
+        {
+          "category": "Security And Governance",
+          "items": [
+            ["audit API calls", "CloudTrail"],
+            ["PII in S3", "Macie"],
+            ["private Bedrock access", "PrivateLink"],
+            ["compliance reports", "Artifact"],
+            ["collect audit evidence", "Audit Manager"]
+          ]
+        }
+      ],
+      "guessingRules": [
+        "Choose the managed AWS service that directly matches the use case.",
+        "For changing knowledge, choose RAG before fine-tuning.",
+        "For format or tone, choose prompt engineering before retraining.",
+        "For responsible AI, choose bias testing, explainability, documentation, and human oversight.",
+        "For security, choose IAM least privilege, encryption, logging, private access, and governance controls."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: test -f index.html && test -f exam.html && test -f data/aws-clf.json && test -f data/aws-aif.json
+      - run: python3 -c "import json; [json.load(open(f)) for f in ['data/aws-clf.json','data/aws-aif.json','data/exams.json']]; print('JSON-OK')"
